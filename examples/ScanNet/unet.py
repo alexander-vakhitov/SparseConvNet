@@ -5,8 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 # Options
-m = 16 # 16 or 32
-residual_blocks=False #True or False
+m = 32 # 16 or 32
+residual_blocks=True #True or False
 block_reps = 1 #Conv block repetition factor: 1 or 2
 
 import torch, data, iou

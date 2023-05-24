@@ -5,9 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 # Options
-scale=20  #Voxel size = 1/scale
+scale=50  #Voxel size = 1/scale
 val_reps=1 # Number of test views, 1 or more
-batch_size=32
+batch_size=24
 elastic_deformation=False
 
 import torch, numpy as np, glob, math, torch.utils.data, scipy.ndimage, multiprocessing as mp, time
@@ -18,14 +18,16 @@ full_scale=4096 #Input field size
 # Class IDs have been mapped to the range {0,1,...,19}
 # NYU_CLASS_IDS = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 24, 28, 33, 34, 36, 39])
 
+num_dataloader_workers = 4
+
 train,val=[],[]
 for x in torch.utils.data.DataLoader(
         glob.glob('train/*.pth'),
-        collate_fn=lambda x: torch.load(x[0]), num_workers=mp.cpu_count()):
+        collate_fn=lambda x: torch.load(x[0]), num_workers=num_dataloader_workers):
     train.append(x)
 for x in torch.utils.data.DataLoader(
         glob.glob('val/*.pth'),
-        collate_fn=lambda x: torch.load(x[0]), num_workers=mp.cpu_count()):
+        collate_fn=lambda x: torch.load(x[0]), num_workers=num_dataloader_workers):
     val.append(x)
 print('Training examples:', len(train))
 print('Validation examples:', len(val))
@@ -85,7 +87,7 @@ train_data_loader = torch.utils.data.DataLoader(
     list(range(len(train))),
     batch_size=batch_size,
     collate_fn=trainMerge,
-    num_workers=20, 
+    num_workers=num_dataloader_workers, 
     shuffle=True,
     drop_last=True,
     worker_init_fn=lambda x: np.random.seed(x+int(time.time()))
@@ -134,7 +136,7 @@ val_data_loader = torch.utils.data.DataLoader(
     list(range(len(val))),
     batch_size=batch_size,
     collate_fn=valMerge,
-    num_workers=20,
+    num_workers=num_dataloader_workers,
     shuffle=True,
     worker_init_fn=lambda x: np.random.seed(x+int(time.time()))
 )

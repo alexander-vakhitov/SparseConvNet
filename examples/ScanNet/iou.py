@@ -31,7 +31,7 @@ def get_iou(label_id, confusion):
 
     denom = (tp + fp + fn)
     if denom == 0:
-        return float('nan')
+        return float(1.0), 0, 0
     return (float(tp) / denom, tp, denom)
 
 def evaluate(pred_ids,gt_ids):
